@@ -182,6 +182,8 @@ int iRegType;               // Register type integer type
 eAddrModeType eA_AddrMode;  // Addressing mode enumerated type
 eRegSpecType eR_RegType;    // Register type enumerated type
 int nValue;                 // n values
+int IN_TRAP;		    // 1=kernel mode; 0=user mode
+int instr_cpt;              // Number of instructions executed in user mode
 
 // Input/Output
 ifstream trapFile;
@@ -726,6 +728,7 @@ void Pop (sRegisterType& Reg, sRegisterType Size)
 
 void SimRETTR ()
 {
+	IN_TRAP = 0;
     int Flags;
     MemByteRead (sR_StackPointer, Flags);   
     FastAdder (sR_StackPointer, sR_One, sR_StackPointer);
@@ -1405,6 +1408,7 @@ void Push (sRegisterType Reg, sRegisterType Size)
 
 void SimTRAP(int trapNumber)
 {
+	IN_TRAP = 1;
     if (4 <= trapNumber)
     {
         iAddrMode = GetAddressingModeThreeBits (sIR_InstrRegister.iInstr_Spec);
@@ -1970,6 +1974,7 @@ void StartExecution ()
     sRegisterType TraceAddr;
     int iLineCount;
     char cResponse[LINE_LENGTH];
+    instr_cpt = 0;
     if (!bMachineReset && !bLoading)
     {
         cout << "Execution error: Machine state not initialized." << endl;
@@ -1994,6 +1999,8 @@ void StartExecution ()
         Halt = false;
         do
         {
+		if (!IN_TRAP) instr_cpt++;
+
             TraceAddr = sR_ProgramCounter;
             FetchIncrPC();
             Execute (Halt);
@@ -2011,6 +2018,7 @@ void StartExecution ()
         {
             chariInputStream.seekg (0, ios::beg);  // Reset input file to its beginning
         }
+        if (!bLoading) fprintf(stderr, "%d\n", instr_cpt);
     }
 }
 
