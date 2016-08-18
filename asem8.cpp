@@ -73,6 +73,7 @@
 #include <iomanip>
 #include <ctype.h>
 #include <string>
+#include <string.h>
 using namespace std;
 
 /*Constants*/

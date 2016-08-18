@@ -18,7 +18,7 @@
 // at the end of the file to assure that the last line terminates with a
 // newline.
 
-#include <iostream>
+#include <stdio.h>
 
 int main ()
 {
