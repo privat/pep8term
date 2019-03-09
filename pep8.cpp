@@ -2022,6 +2022,28 @@ void StartExecution ()
     }
 }
 
+void Load(const char *FileName) {
+    chariInputStream.open(FileName);
+    if (chariInputStream.is_open())
+    {
+        bMachineReset = true;
+        bBufferIsEmpty = true;
+        bLoading = true;
+        sR_StackPointer.iHigh = iMemory[SYSTEM_SP];
+        sR_StackPointer.iLow = iMemory[SYSTEM_SP + 1];
+        sR_ProgramCounter.iHigh = iMemory[LOADER_PC];
+        sR_ProgramCounter.iLow = iMemory[LOADER_PC + 1];
+        StartExecution ();
+        bLoading = false;
+    }
+    else
+    {
+        cout << "Could not open object file " << FileName << endl;
+    }
+    chariInputStream.close();
+    chariInputStream.clear();
+}
+
 void LoaderCommand()
 {
     char FileName[FILE_NAME_LENGTH];
@@ -2042,27 +2064,9 @@ void LoaderCommand()
     FileName[iTemp++] = 'p';
     FileName[iTemp++] = 'o';
     FileName[iTemp] = '\0';
-    chariInputStream.open(FileName);
-    if (chariInputStream.is_open())
-    {
-        cout << "Object file is " << FileName << endl;
-        bMachineReset = true;
-        bBufferIsEmpty = true;
-        bLoading = true;
-        sR_StackPointer.iHigh = iMemory[SYSTEM_SP];
-        sR_StackPointer.iLow = iMemory[SYSTEM_SP + 1];
-        sR_ProgramCounter.iHigh = iMemory[LOADER_PC];
-        sR_ProgramCounter.iLow = iMemory[LOADER_PC + 1];
-        StartExecution ();
-        bLoading = false;
-    }
-    else
-    {
-        cout << "Could not open object file " << FileName << endl;
-    }
-    chariInputStream.close();
-    chariInputStream.clear();
+    Load(FileName);
 }
+
 
 void ExecuteCommand()
 {
