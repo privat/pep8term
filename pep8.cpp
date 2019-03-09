@@ -1673,7 +1673,7 @@ void InstallRom (bool& bError)
             }
             ROMFile.close();
             ROMFile.clear();
-            cout << iRomStartAddr << " bytes RAM free." << endl;
+            //cout << iRomStartAddr << " bytes RAM free." << endl;
         }
     }
 }
@@ -2018,7 +2018,7 @@ void StartExecution ()
         {
             chariInputStream.seekg (0, ios::beg);  // Reset input file to its beginning
         }
-        if (!bLoading) fprintf(stderr, "%d\n", instr_cpt);
+        //if (!bLoading) fprintf(stderr, "%d\n", instr_cpt);
     }
 }
 
