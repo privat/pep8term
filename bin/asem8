@@ -1,0 +1,12 @@
+#!/bin/bash
+
+PEPDIR=/opt/pep8/
+
+if [ "$#" != 1 ]; then
+	echo "Usage: asem8 prog.pep"
+	exit 1
+fi
+
+path=$(readlink -f "$1")
+cd "$PEPDIR"
+./asem8 "$path"
