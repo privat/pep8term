@@ -2420,6 +2420,7 @@ void MainPrompt()
 int main (int argc, char *argv[])
 {
     bool bError;
+    char *file = NULL;
    
     if (argc == 2)
     {
@@ -2429,8 +2430,7 @@ int main (int argc, char *argv[])
         }
         else
         {
-            cerr << "usage: pep8 [-v]" << endl;
-            return 2;
+		file = argv[1];
         }
     }
     else if (argc > 2)
@@ -2451,9 +2451,14 @@ int main (int argc, char *argv[])
     {
         return 3;
     }
-    else
+    else if (file == NULL)
     {
         MainPrompt();
         return 0;
+    }
+    else
+    {
+	    Load(file);
+	    ExecuteCommand();
     }
 }
