@@ -893,19 +893,27 @@ void SimNOTr()
 
 void SimNEGr()
 {
+    unsigned int tmp;
     iRegType = GetRegisterTypeLastBit (sIR_InstrRegister.iInstr_Spec);
     eR_RegType = ProcessRegisterType(iRegType);
    
     switch (eR_RegType)
     {
     case eR_R_IS_ACCUMULATOR:
-        sR_Accumulator.iHigh = ~sR_Accumulator.iHigh + 256;
-        sR_Accumulator.iLow = ~sR_Accumulator.iLow + 257;
+        //sR_Accumulator.iHigh = ~sR_Accumulator.iHigh + 256;
+        //sR_Accumulator.iLow = ~sR_Accumulator.iLow + 257;
+	// HOTFIX
+	tmp = 256*256-(sR_Accumulator.iHigh*256 + sR_Accumulator.iLow);
+	sR_Accumulator.iHigh = (tmp / 256)%256;
+	sR_Accumulator.iLow = tmp % 256;
         SetNZBits (sR_Accumulator);
         break;
     case eR_R_IS_INDEX_REG:
-        sR_IndexRegister.iHigh = ~sR_IndexRegister.iHigh + 256;
-        sR_IndexRegister.iLow = ~sR_IndexRegister.iLow + 257;
+	tmp = 256*256-(sR_IndexRegister.iHigh*256 + sR_IndexRegister.iLow);
+	sR_IndexRegister.iHigh = (tmp / 256)%256;
+	sR_IndexRegister.iLow = tmp % 256;
+        //sR_IndexRegister.iHigh = ~sR_IndexRegister.iHigh + 256;
+        //sR_IndexRegister.iLow = ~sR_IndexRegister.iLow + 257;
         SetNZBits (sR_IndexRegister);
         break;
     }
@@ -2459,6 +2467,7 @@ int main (int argc, char *argv[])
     else
     {
 	    Load(file);
+	    //eTraceMode = eT_TR_PROGRAM; 
 	    ExecuteCommand();
     }
 }
