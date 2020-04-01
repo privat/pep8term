@@ -116,7 +116,8 @@ const int MIN_BYTE=-256; /*Minimum decimal value for a byte*/
 const int MIN_DEC=-32768; /*Minimum decimal value*/
 const int LINE_LENGTH=1024; /*Maximum length of a line of code*/
 const int CODE_MAX_SIZE=32768; /*Maximum number of bytes of code*/
-const int FILE_NAME_LENGTH=64; /*61 characters maximum in a file name*/
+const int FILE_NAME_LENGTH=255; /*255 characters maximum in a file name. Matches maximum file name length for ext[2-4] filesystems*/
+const int FILE_PATH_LENGTH=4096; /*4096 characters maximum in a file's full path. Matches maximum length for ext[2-4] filesystems*/
 const int UNIMPLEMENTED_INSTRUCTIONS = 8; /*Number of unimplemented mnemonics*/
 const int UNARY_TRAPS = 4; /*Number of unimplemented mnemonics guaranteed to be unary*/
 
@@ -4377,9 +4378,9 @@ int main (int argc, char *argv[]){
     Valid* pValid;
     int i;
     int j;
-    char sourceFileName[FILE_NAME_LENGTH];
-    char objectFileName[FILE_NAME_LENGTH];
-    char listingFileName[FILE_NAME_LENGTH];
+    char sourceFileName[FILE_PATH_LENGTH];
+    char objectFileName[FILE_PATH_LENGTH];
+    char listingFileName[FILE_PATH_LENGTH];
     bool bTemp=false;
     bool bListing=false;
     bool bVersion=false;
@@ -4414,12 +4415,12 @@ int main (int argc, char *argv[]){
             }
         }
         else{
-            if (strlen(argv[1])>FILE_NAME_LENGTH - 3){
+            if (strlen(argv[1])>FILE_PATH_LENGTH - 3 || strlen(basename(argv[1]))>FILE_NAME_LENGTH - 3){
                 cerr << "Source file name too long" << endl;
                 return 2;
             }
             else{
-                strncpy (sourceFileName, argv[1], FILE_NAME_LENGTH);
+                strncpy (sourceFileName, argv[1], FILE_PATH_LENGTH);
             }
         }
     }
@@ -4439,12 +4440,12 @@ int main (int argc, char *argv[]){
             return 2;
         }
         else{
-            if (strlen(argv[1])>FILE_NAME_LENGTH - 3){
+            if (strlen(argv[1])>FILE_PATH_LENGTH - 3 || strlen(basename(argv[1]))>FILE_NAME_LENGTH - 3){
                 cerr << "Source file name too long" << endl;
                 return 2;
             }
             else{
-                strncpy (sourceFileName, argv[2], FILE_NAME_LENGTH);
+                strncpy (sourceFileName, argv[2], FILE_PATH_LENGTH);
             }
         }
     }
@@ -4452,12 +4453,12 @@ int main (int argc, char *argv[]){
         if (strcmp(argv[1], "-v") == 0 && strcmp(argv[2], "-l") == 0 && argv[3][0]!='-'){
             bVersion=true;
             bListing=true;
-            if (strlen(argv[1])>FILE_NAME_LENGTH - 3){
+            if (strlen(argv[1])>FILE_PATH_LENGTH - 3 || strlen(basename(argv[1]))>FILE_NAME_LENGTH - 3){
                 cerr << "Source file name too long" << endl;
                 return 2;
             }
             else{
-                strncpy (sourceFileName, argv[3], FILE_NAME_LENGTH);
+                strncpy (sourceFileName, argv[3], FILE_PATH_LENGTH);
             }
         }
         else{
@@ -4531,7 +4532,7 @@ int main (int argc, char *argv[]){
         }
     }
     if ((iErrorIndex == 0) && (bTerminate) && (bListing)){ /*Create assembler listing*/
-        strncpy (listingFileName, sourceFileName, FILE_NAME_LENGTH);
+        strncpy (listingFileName, sourceFileName, FILE_PATH_LENGTH);
         strcat(listingFileName, "l");
         out_file.open(listingFileName);
         out_file << setiosflags(ios::fixed) << setiosflags(ios::showpoint)
@@ -4594,7 +4595,7 @@ int main (int argc, char *argv[]){
         out_file.close();
     }
     if ((iErrorIndex == 0) && (bTerminate)) {/*Generate object file*/
-        strncpy (objectFileName, sourceFileName, FILE_NAME_LENGTH);
+        strncpy (objectFileName, sourceFileName, FILE_PATH_LENGTH);
         strcat(objectFileName, "o");
         out_file.open(objectFileName);
         out_file << setiosflags(ios::fixed) << setiosflags(ios::showpoint)
