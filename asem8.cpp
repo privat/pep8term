@@ -74,6 +74,7 @@
 #include <ctype.h>
 #include <string>
 #include <string.h>
+#include <libgen.h>
 using namespace std;
 
 /*Constants*/
